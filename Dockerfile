@@ -1,23 +1,30 @@
+# Etapa 1: Imagem base para dependências
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-ENV ASPNETCORE_URLS http://*:80
 WORKDIR /app
 EXPOSE 80
 
+# Etapa 2: Build da aplicação
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
+
+# Copia o arquivo csproj e restaura as dependências
 COPY ["EasyWheelsApi.csproj", "."]
 RUN dotnet restore "./EasyWheelsApi.csproj"
+
+# Copia todo o código para o container e faz o build
 COPY . .
-WORKDIR "/src/."
 RUN dotnet build "EasyWheelsApi.csproj" -c Release -o /app/build
 
+# Etapa 3: Publicação da aplicação
 FROM build AS publish
 RUN dotnet publish "EasyWheelsApi.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Etapa 4: Imagem final
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "EasyWheelsApi.csproj.dll"]
+ENTRYPOINT ["dotnet", "EasyWheelsApi.dll"]
+
 
 
 
