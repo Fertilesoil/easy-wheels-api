@@ -1,0 +1,6 @@
+@EasyWheelsApi_HostAddress = http://localhost:5189
+
+GET {{EasyWheelsApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

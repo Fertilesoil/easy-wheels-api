@@ -1,0 +1,31 @@
+/*
+# Login endpoints
+*/
+# Login endpoint
+POST http://localhost:5189/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "fernandodias@gmail.com",
+  "password": "Senhasegura123!"
+}
+###
+# Endpoint to refresh the token
+POST http://localhost:5189/api/Auth/refresh-token
+Content-Type: application/json
+
+{
+  "email": "fernandodias@gmail.com"
+}
+/*
+# Lessor endpoints
+
+*/
+###
+# Fetch all lessors
+GET http://localhost:5189/api/Lessor
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZXJuYW5kb2RpYXNAZ21haWwuY29tIiwianRpIjoiNmM5NWI2OWUtYTU4Yi00NzYwLTk1OTgtODJkNzg5ZGNkOTU2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzYmQ1YzM2OC1mZTU2LTQwNzgtOTZkNi01NzYyOTRmMzQxYWIiLCJleHAiOjE3MjI4NjY0OTgsImlzcyI6IjY1NzZmMzk2OTI0MjY1Y2ZjNjYzNGFjZTc0ZGU2YmMzNGEwZjgwODM5OWMxZmNjODI0ZGE0MmRmODU0NjIxMTciLCJhdWQiOiJhY2UxOTJmYzA3NGNkZjdkNGVjY2VhMDA2NWRkMWU2ZjVmYmFmZjBhNDNiMGJhMmViYjU4M2FiNzk0MDU3YmYzIn0.UgQf2c4AFXFJtQzpNfstES8wUA0WoEoFEdhzMtO-VnA
+###
+# Fetch lessor by id
+GET http://localhost:5189/api/Lessor/af808297-b857-4fb2-b83f-c7939f80f6bc
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJmZXJuYW5kb2RpYXNAZ21haWwuY29tIiwianRpIjoiNmM5NWI2OWUtYTU4Yi00NzYwLTk1OTgtODJkNzg5ZGNkOTU2IiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzYmQ1YzM2OC1mZTU2LTQwNzgtOTZkNi01NzYyOTRmMzQxYWIiLCJleHAiOjE3MjI4NjY0OTgsImlzcyI6IjY1NzZmMzk2OTI0MjY1Y2ZjNjYzNGFjZTc0ZGU2YmMzNGEwZjgwODM5OWMxZmNjODI0ZGE0MmRmODU0NjIxMTciLCJhdWQiOiJhY2UxOTJmYzA3NGNkZjdkNGVjY2VhMDA2NWRkMWU2ZjVmYmFmZjBhNDNiMGJhMmViYjU4M2FiNzk0MDU3YmYzIn0.UgQf2c4AFXFJtQzpNfstES8wUA0WoEoFEdhzMtO-VnA

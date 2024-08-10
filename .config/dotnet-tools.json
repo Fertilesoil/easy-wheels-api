@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "questpdf.previewer": {
+      "version": "2024.7.0",
+      "commands": [
+        "questpdf-previewer"
+      ]
+    }
+  }
+}
