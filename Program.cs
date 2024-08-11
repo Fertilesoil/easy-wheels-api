@@ -176,10 +176,26 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Criar o Banco de dados e as tabelas Automaticamente
-using (var scope = app.Services.CreateAsyncScope())
+
+if (app.Environment.IsDevelopment())
 {
+    using var scope = app.Services.CreateAsyncScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<RentalDbContext>();
     await dbContext.Database.EnsureCreatedAsync();
+}
+else
+{
+    using var scope = app.Services.CreateScope();
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<RentalDbContext>();
+        context.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
+    }
 }
 
 // Configure the HTTP request pipeline.
@@ -200,21 +216,6 @@ else
         c.RoutePrefix = string.Empty;
     });
 }
-
-// using (var scope = app.Services.CreateScope())
-// {
-//     var services = scope.ServiceProvider;
-//     try
-//     {
-//         var context = services.GetRequiredService<RentalDbContext>();
-//         context.Database.Migrate();
-//     }
-//     catch (Exception ex)
-//     {
-//         // Log the error or handle it as needed
-//         Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
-//     }
-// }
 
 app.UseAuthentication();
 app.UseAuthorization();
