@@ -187,6 +187,15 @@ if (app.Environment.IsDevelopment())
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "EasyWheelsApi v1");
     });
 }
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "EasyWheelsApi v1");
+        c.RoutePrefix = string.Empty;
+    });
+}
 
 app.UseAuthentication();
 app.UseAuthorization();
