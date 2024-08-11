@@ -4639,6 +4639,7 @@
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 8.0.7",
       "Microsoft.AspNetCore.Identity.EntityFrameworkCore >= 8.0.7",
       "Microsoft.EntityFrameworkCore >= 8.0.7",
+      "Microsoft.EntityFrameworkCore.Design >= 8.0.7",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.7",
       "Microsoft.EntityFrameworkCore.Tools >= 8.0.7",
       "Newtonsoft.Json >= 13.0.3",
@@ -4654,11 +4655,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
+      "projectUniqueName": "C:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
       "projectName": "EasyWheelsApi",
-      "projectPath": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
+      "projectPath": "C:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\obj\\",
+      "outputPath": "C:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -4694,6 +4695,12 @@
             "version": "[8.0.7, )"
           },
           "Microsoft.EntityFrameworkCore": {
+            "target": "Package",
+            "version": "[8.0.7, )"
+          },
+          "Microsoft.EntityFrameworkCore.Design": {
+            "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+            "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.7, )"
           },
