@@ -23,6 +23,8 @@ namespace EasyWheelsApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
+            throw new Exception("Não vai fazer login irmão");
+            
             var userFound = await _userManager.FindByEmailAsync(user.Email);
 
             if (userFound is null)

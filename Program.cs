@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using EasyWheelsApi.Data;
 using EasyWheelsApi.Facade;
+using EasyWheelsApi.Middlewares;
 using EasyWheelsApi.Models.Entities;
 using EasyWheelsApi.Services;
 using EasyWheelsApi.Services.Impl;
@@ -215,6 +216,8 @@ else
 //         Console.WriteLine("An error occurred while migrating the database: " + ex.Message);
 //     }
 // }
+
+app.ConfigureExceptionHandler();
 
 app.UseAuthentication();
 app.UseAuthorization();
