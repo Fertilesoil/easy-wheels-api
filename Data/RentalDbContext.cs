@@ -14,6 +14,8 @@ namespace EasyWheelsApi.Data
         {
             base.OnModelCreating(builder);
 
+            builder.HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
             builder
                 .Entity<User>()
                 .HasDiscriminator<string>("UserType")

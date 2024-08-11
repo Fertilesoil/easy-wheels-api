@@ -12,10 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -182,7 +179,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateAsyncScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<RentalDbContext>();
-    dbContext.Database.EnsureCreated();
+    await dbContext.Database.EnsureCreatedAsync();
 }
 
 // Configure the HTTP request pipeline.

@@ -23,21 +23,21 @@ namespace EasyWheelsApi.Services
             var viaCepResponse = await response.Content.ReadFromJsonAsync<ViaCepResponse>();
 
             return new AddressDto(
-                viaCepResponse!.Cep,
-                viaCepResponse.Logradouro,
-                viaCepResponse.Bairro,
-                viaCepResponse.Localidade,
-                viaCepResponse.Uf
+                viaCepResponse!.Cep ?? "",
+                viaCepResponse.Logradouro ?? "",
+                viaCepResponse.Bairro ?? "",
+                viaCepResponse.Localidade ?? "",
+                viaCepResponse.Uf ?? ""
             );
         }
 
         private sealed class ViaCepResponse
         {
-            public string Cep { get; set; }
-            public string Logradouro { get; set; }
-            public string Bairro { get; set; }
-            public string Localidade { get; set; }
-            public string Uf { get; set; }
+            public string? Cep { get; set; }
+            public string? Logradouro { get; set; } = string.Empty;
+            public string? Bairro { get; set; }
+            public string? Localidade { get; set; }
+            public string? Uf { get; set; }
         }
     }
 }
