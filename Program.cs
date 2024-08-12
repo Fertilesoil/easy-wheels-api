@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using EasyWheelsApi.Data;
 using EasyWheelsApi.Facade;
+using EasyWheelsApi.GlobalExceptionHandler;
 using EasyWheelsApi.Models.Entities;
 using EasyWheelsApi.Services;
 using EasyWheelsApi.Services.Impl;
@@ -49,6 +50,9 @@ builder.Services.AddScoped<ILessorService, LessorService>();
 builder.Services.AddScoped<ILesseeService, LesseeService>();
 builder.Services.AddScoped<ICarService, CarService>();
 builder.Services.AddScoped<IRentalService, RentalService>();
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 builder
     .Services.AddControllers()
@@ -108,6 +112,8 @@ builder.Services.AddSwaggerGen(c =>
             }
         }
     );
+
+    c.EnableAnnotations();
 });
 
 builder.Services.AddAuthorization();
@@ -217,6 +223,7 @@ else
     });
 }
 
+app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
 
