@@ -1,5 +1,5 @@
 using EasyWheelsApi.Facade;
-using EasyWheelsApi.Models.Dtos;
+using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Dtos.UserMapping;
 using EasyWheelsApi.Models.Dtos.ViaCep;
 using EasyWheelsApi.Models.Entities;

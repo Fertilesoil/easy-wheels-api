@@ -1,6 +1,6 @@
 using EasyWheelsApi.Models.Entities;
 
-namespace EasyWheelsApi.Models.Dtos
+namespace EasyWheelsApi.Models.Dtos.UserDtos
 {
     public record LesseeResponseDto(
         string Id,

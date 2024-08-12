@@ -1,7 +1,6 @@
 
-using EasyWheelsApi.Models.Dtos;
+using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Entities;
-using Microsoft.AspNetCore.Identity;
 
 namespace EasyWheelsApi.Services.Interfaces
 {

@@ -1,7 +1,8 @@
 
-using EasyWheelsApi.Models.Entities;
+using EasyWheelsApi.Models.Dtos.CarDtos;
+using EasyWheelsApi.Models.Dtos.RentalDtos;
 
-namespace EasyWheelsApi.Models.Dtos
+namespace EasyWheelsApi.Models.Dtos.UserDtos
 {
     public record UserResponseDto(
         string Id,
@@ -11,7 +12,7 @@ namespace EasyWheelsApi.Models.Dtos
         string Profession,
         string Email,
         string Usertype,
-        List<Rental>? Rentals,
-        List<Car>? Cars
+        List<RentalInfo>? Rentals,
+        List<CarResponseDto>? Cars
     );
 }

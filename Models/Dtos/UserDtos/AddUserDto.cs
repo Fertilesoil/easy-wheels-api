@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace EasyWheelsApi.Models.Dtos
+namespace EasyWheelsApi.Models.Dtos.UserDtos
 {
     public record AddUserDto(
         string Username,
@@ -17,6 +12,9 @@ namespace EasyWheelsApi.Models.Dtos
         [Required] string Password,
         [Required] [MaxLength(9)] string Rg,
         [Required] [MaxLength(11)] string Cpf,
+        string? City,
+        string? State,
+        string? Street,
         [Required] int HouseNumber,
         [Required] [MaxLength(8)] string PostalCode
     );

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyWheelsApi.Models.Dtos;
+
+using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Entities;
 
 namespace EasyWheelsApi.Services.Interfaces

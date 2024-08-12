@@ -1,4 +1,4 @@
-using EasyWheelsApi.Models.Dtos;
+using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Dtos.UserMapping;
 using EasyWheelsApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;

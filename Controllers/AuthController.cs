@@ -1,5 +1,6 @@
 using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Models.Dtos;
+using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,8 @@ namespace EasyWheelsApi.Controllers
         private readonly SignInManager<User> _signInManager = signInManager;
         private readonly IConfiguration _configuration = configuration;
         private const string REFRESH = "refreshtoken";
-        private record SuccessDto(string AccessToken);
+
+        private sealed record SuccessDto(string AccessToken);
 
         [HttpPost("login")]
         [SwaggerOperation(
@@ -77,12 +79,7 @@ namespace EasyWheelsApi.Controllers
             );
 
             await _userManager.UpdateAsync(userFound!);
-            return Ok(
-                JsonConvert.SerializeObject(
-                    new { AccessToken = "Bearer " + accessToken },
-                    Formatting.Indented
-                )
-            );
+            return Ok(JsonConvert.SerializeObject(new { AccessToken = "Bearer " + accessToken }));
         }
 
         [HttpPost("logout")]
@@ -149,11 +146,13 @@ namespace EasyWheelsApi.Controllers
                     StatusCodes.Status401Unauthorized
                 );
 
-            var userFound = await _userManager.FindByEmailAsync(email.Email) ?? throw new CustomException(
-                "No user found",
-                "No such user was found with those parameters",
-                StatusCodes.Status404NotFound
-            );
+            var userFound =
+                await _userManager.FindByEmailAsync(email.Email)
+                ?? throw new CustomException(
+                    "No user found",
+                    "No such user was found with those parameters",
+                    StatusCodes.Status404NotFound
+                );
 
             TokenConfiguration token = new(_configuration);
 

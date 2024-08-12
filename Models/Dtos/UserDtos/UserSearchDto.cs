@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyWheelsApi.Models.Entities;
 
-namespace EasyWheelsApi.Models.Dtos
+using EasyWheelsApi.Models.Dtos.CarDtos;
+using EasyWheelsApi.Models.Dtos.RentalDtos;
+
+namespace EasyWheelsApi.Models.Dtos.UserDtos
 {
     public record UserSearchDto(
         string Id,
@@ -19,7 +17,7 @@ namespace EasyWheelsApi.Models.Dtos
         int HouseNumber,
         string PostalCode,
         string UserType,
-        List<Rental>? Rentals,
-        List<Car>? Cars
+        List<RentalInfo>? Rentals,
+        List<CarResponseDto>? Cars
     );
 }

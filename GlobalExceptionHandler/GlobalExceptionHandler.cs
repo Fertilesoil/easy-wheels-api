@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 using EasyWheelsApi.Models.Entities;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EasyWheelsApi.GlobalExceptionHandler
@@ -30,8 +31,11 @@ namespace EasyWheelsApi.GlobalExceptionHandler
                 statusCode = customException.StatusCode;
                 message = customException.Message;
                 title = customException.Title;
-            }
-            else
+            } else
+            // else if (exception is typeof(IdentityResult) identityResult)
+            // {
+
+            // } else
             {
                 statusCode = (int)HttpStatusCode.InternalServerError;
                 message = "An unexpected error occurred.";
