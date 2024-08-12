@@ -2,11 +2,10 @@ using System.Text.Json;
 
 namespace EasyWheelsApi.Models.Entities
 {
-    public class ErrorDetails
+    public class CustomException(string title, string message, int statusCode) : Exception(message)
     {
-        public int StatusCode { get; set; }
-        public string? Message { get; set; }
-
-        public override string ToString() => JsonSerializer.Serialize(this);
+        public int StatusCode { get; set; } = statusCode;
+        public string Title { get; set; } = title;
+        public override string ToString() => $"CustomException: Title: {Title}, Message: {Message}, StatusCode: {StatusCode}";
     }
 }

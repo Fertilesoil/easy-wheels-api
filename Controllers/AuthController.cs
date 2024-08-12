@@ -1,9 +1,10 @@
-using System.Net;
 using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Models.Dtos;
 using EasyWheelsApi.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EasyWheelsApi.Controllers
 {
@@ -19,21 +20,27 @@ namespace EasyWheelsApi.Controllers
         private readonly SignInManager<User> _signInManager = signInManager;
         private readonly IConfiguration _configuration = configuration;
         private const string REFRESH = "refreshtoken";
+        private record SuccessDto(string AccessToken);
 
         [HttpPost("login")]
+        [SwaggerOperation(
+            Summary = "Login de usuários",
+            Description = "Endpoint para login de usuários. A operação retorna um token JWT válido para liberar o consumo dos recursos da aplicação."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(SuccessDto)),
+            SwaggerResponse(401, "Unauthorized", typeof(CustomExceptionDto)),
+            SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
+            SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+        ]
         public async Task<IActionResult> Login([FromBody] UserLoginDto user)
         {
-            throw new Exception("Não vai fazer login irmão");
-            
-            var userFound = await _userManager.FindByEmailAsync(user.Email);
-
-            if (userFound is null)
-                return Unauthorized(
-                    new IdentityError
-                    {
-                        Code = "401",
-                        Description = "No such user was found with those parameters"
-                    }
+            var userFound =
+                await _userManager.FindByEmailAsync(user.Email)
+                ?? throw new CustomException(
+                    "User not found",
+                    "No such user was found with those parameters",
+                    StatusCodes.Status404NotFound
                 );
 
             var result = await _signInManager.PasswordSignInAsync(
@@ -44,9 +51,13 @@ namespace EasyWheelsApi.Controllers
             );
 
             if (!result.Succeeded)
-                return Unauthorized();
+                throw new CustomException(
+                    "Password issue",
+                    "The passwords don't match",
+                    StatusCodes.Status401Unauthorized
+                );
 
-            TokenConfiguration token = new TokenConfiguration(_configuration);
+            TokenConfiguration token = new(_configuration);
 
             var accessToken = token.GenerateJwtToken(userFound!);
             var refreshToken = token.GenerateRefreshToken(userFound!);
@@ -66,52 +77,94 @@ namespace EasyWheelsApi.Controllers
             );
 
             await _userManager.UpdateAsync(userFound!);
-            return Ok(new { AccessToken = "Bearer " + accessToken });
+            return Ok(
+                JsonConvert.SerializeObject(
+                    new { AccessToken = "Bearer " + accessToken },
+                    Formatting.Indented
+                )
+            );
         }
 
         [HttpPost("logout")]
+        [SwaggerOperation(
+            Summary = "Logout de usuários",
+            Description = "Endpoint para deslogar usuários. A operação elimina o cookie que foi fornecido no login."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(SuccessDto)),
+            SwaggerResponse(400, "Bad Request", typeof(CustomExceptionDto)),
+            SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto))
+        ]
         public async Task<IActionResult> Logout([FromBody] EmailDto email)
         {
             if (string.IsNullOrEmpty(email.Email))
             {
-                return BadRequest("Email is required for logout verification.");
+                throw new CustomException(
+                    "Missing info",
+                    "Email is required for logout verification.",
+                    StatusCodes.Status400BadRequest
+                );
             }
 
             var refreshToken = Request.Cookies[REFRESH];
 
             if (string.IsNullOrEmpty(refreshToken))
             {
-                return Ok(new { Message = "Logout successful, no refresh token found" });
+                return Ok(
+                    JsonConvert.SerializeObject(
+                        new { Message = "Logout successful, no refresh token found." },
+                        Formatting.Indented
+                    )
+                );
             }
 
             await _signInManager.SignOutAsync();
             Response.Cookies.Delete(REFRESH);
 
-            return Ok(new { Message = "Logout successful" });
+            return Ok(
+                JsonConvert.SerializeObject(
+                    new { Message = "Logout successful." },
+                    Formatting.Indented
+                )
+            );
         }
 
         [HttpPost("refresh-token")]
+        [SwaggerOperation(
+            Summary = "Refresh Token",
+            Description = "Endpoint para renovar autenticação. A operação retorna um novo token JWT para continuar consumindo os recursos da aplicação."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(SuccessDto)),
+            SwaggerResponse(401, "Unauthorized", typeof(CustomExceptionDto)),
+            SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
+            SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto))
+        ]
         public async Task<IActionResult> RefreshToken([FromBody] EmailDto email)
         {
             if (!Request.Cookies.TryGetValue(REFRESH, out var refreshtoken))
-                return Unauthorized();
-
-            var userFound = await _userManager.FindByEmailAsync(email.Email);
-
-            if (userFound is null)
-                return Unauthorized(
-                    new IdentityError
-                    {
-                        Code = "401",
-                        Description = "No such user was found with those parameters"
-                    }
+                throw new CustomException(
+                    "Missing refresh token",
+                    "No valid refresh tokens were found, please try log in again",
+                    StatusCodes.Status401Unauthorized
                 );
 
-            TokenConfiguration token = new TokenConfiguration(_configuration);
+            var userFound = await _userManager.FindByEmailAsync(email.Email) ?? throw new CustomException(
+                "No user found",
+                "No such user was found with those parameters",
+                StatusCodes.Status404NotFound
+            );
+
+            TokenConfiguration token = new(_configuration);
 
             var newAccessToken = token.GenerateJwtToken(userFound);
 
-            return Ok(new { AccessToken = "Bearer " + newAccessToken });
+            return Ok(
+                JsonConvert.SerializeObject(
+                    new { AccessToken = "Bearer " + newAccessToken },
+                    Formatting.Indented
+                )
+            );
         }
     }
 }
