@@ -1,5 +1,4 @@
 using EasyWheelsApi.Facade;
-using EasyWheelsApi.Models.Dtos;
 using EasyWheelsApi.Models.Dtos.CarDtos;
 using EasyWheelsApi.Models.Dtos.RentalDtos;
 using EasyWheelsApi.Models.Dtos.UserDtos;
@@ -7,6 +6,8 @@ using EasyWheelsApi.Models.Dtos.UserMapping;
 using EasyWheelsApi.Models.Dtos.ViaCep;
 using EasyWheelsApi.Models.Entities;
 using EasyWheelsApi.Services.Interfaces;
+using EasyWheelsApi.Validation.AddressValidation;
+using EasyWheelsApi.Validation.UserValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,15 +21,19 @@ namespace EasyWheelsApi.Services.Impl
 
         public async Task<Lessor> CreateLessorAsync(AddUserDto lessor, string password)
         {
-            if (string.IsNullOrEmpty(lessor.Street) || lessor.Street == "string" || string.IsNullOrEmpty(lessor.City) || lessor.City == "string" || string.IsNullOrEmpty(lessor.State) || lessor.State == "string")
+            if (
+                lessor.Street!.IsValidAddress()
+                || lessor.City!.IsValidAddress()
+                || lessor.State!.IsValidAddress()
+            )
             {
                 var cep = new CepDto(lessor.PostalCode);
                 var addressDto = await _addressFacade.CompleteAddressAsync(cep);
 
-                if(string.IsNullOrEmpty(addressDto.Bairro) || string.IsNullOrEmpty(addressDto.Logradouro) || string.IsNullOrEmpty(addressDto.Cidade) || string.IsNullOrEmpty(addressDto.Estado)) 
-                throw new CustomException(
+                if (addressDto.IsValid())
+                    throw new CustomException(
                         "Address not found",
-                        "The given addres code does not return any matches, please write the complete address",
+                        "The given postal code does not return any matches, please write the complete address",
                         StatusCodes.Status404NotFound
                     );
 

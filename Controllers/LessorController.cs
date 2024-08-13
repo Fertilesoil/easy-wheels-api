@@ -53,7 +53,9 @@ namespace EasyWheelsApi.Controllers
         ]
         public async Task<IActionResult> GetLessorById(string id)
         {
-            var lessor = await _service.GetLessorByidAsync(id) ?? throw new CustomException (
+            var lessor =
+                await _service.GetLessorByidAsync(id)
+                ?? throw new CustomException(
                     "Lessor not found",
                     "None lessor was found with those parameters",
                     StatusCodes.Status404NotFound
@@ -79,15 +81,27 @@ namespace EasyWheelsApi.Controllers
 
         [Authorize]
         [HttpPut("{id}")]
+        [SwaggerOperation(
+            Summary = "Atualizar informações de um Locador",
+            Description = "A operação atualiza um Locador já registrado no banco de dados. A busca é baseada no Id do Locador."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(UserResponseDto)),
+            SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
+            SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+        ]
         public async Task<IActionResult> UpdateLessor(
             string id,
             [FromBody] UpdateUserDto updatedLessor
         )
         {
-            var actualUser = await _service.GetLessorByidAsync(id);
-
-            if (actualUser is null)
-                return NotFound();
+            var actualUser =
+                await _service.GetLessorByidAsync(id)
+                ?? throw new CustomException(
+                    "Lessor not found",
+                    "None Lessor was found with those parameters",
+                    StatusCodes.Status404NotFound
+                );
 
             await _service.UpdateLessorAsync(updatedLessor.ToEntity(actualUser), actualUser);
             return Ok();
@@ -95,6 +109,13 @@ namespace EasyWheelsApi.Controllers
 
         [Authorize]
         [HttpDelete("{id}")]
+        [SwaggerOperation(
+            Summary = "Deletar um Locador",
+            Description = "A operação deleta um Locador já registrado do banco de dados. A busca é baseada no Id do Locador e não retornará erros se o Locador não existir."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(UserResponseDto))
+        ]
         public async Task<IActionResult> DeleteLessor(string id)
         {
             await _service.DeleteLessor(id);

@@ -2,6 +2,7 @@ using EasyWheelsApi.Facade;
 using EasyWheelsApi.Models.Dtos.ViaCep;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace EasyWheelsApi.Controllers
 {
@@ -17,7 +18,7 @@ namespace EasyWheelsApi.Controllers
         {
             var cepResult = new CepDto(cep);
             var addressDto = await _viaCepService.CompleteAddressAsync(cepResult);
-            return Ok(addressDto);
+            return Ok(JsonConvert.SerializeObject(addressDto, Formatting.Indented));
         }
     }
 }

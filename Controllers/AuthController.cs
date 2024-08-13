@@ -79,7 +79,7 @@ namespace EasyWheelsApi.Controllers
             );
 
             await _userManager.UpdateAsync(userFound!);
-            return Ok(JsonConvert.SerializeObject(new { AccessToken = "Bearer " + accessToken }));
+            return Ok(JsonConvert.SerializeObject(new { AccessToken = "Bearer " + accessToken }, Formatting.Indented));
         }
 
         [HttpPost("logout")]
