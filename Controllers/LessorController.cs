@@ -17,7 +17,7 @@ namespace EasyWheelsApi.Controllers
     {
         private readonly ILessorService _service = service;
 
-        // private record
+        private sealed record SuccessDto(string Message);
 
         [Authorize]
         [HttpGet]
@@ -86,7 +86,7 @@ namespace EasyWheelsApi.Controllers
             Description = "A operação atualiza um Locador já registrado no banco de dados. A busca é baseada no Id do Locador."
         )]
         [
-            SwaggerResponse(200, "Success", typeof(UserResponseDto)),
+            SwaggerResponse(200, "Success", typeof(SuccessDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
         ]
@@ -104,7 +104,7 @@ namespace EasyWheelsApi.Controllers
                 );
 
             await _service.UpdateLessorAsync(updatedLessor.ToEntity(actualUser), actualUser);
-            return Ok();
+            return Ok(JsonConvert.SerializeObject(new SuccessDto("The Lessor was successfully updated"), Formatting.Indented));
         }
 
         [Authorize]
@@ -113,9 +113,7 @@ namespace EasyWheelsApi.Controllers
             Summary = "Deletar um Locador",
             Description = "A operação deleta um Locador já registrado do banco de dados. A busca é baseada no Id do Locador e não retornará erros se o Locador não existir."
         )]
-        [
-            SwaggerResponse(200, "Success", typeof(UserResponseDto))
-        ]
+        [SwaggerResponse(200, "Success", typeof(UserResponseDto))]
         public async Task<IActionResult> DeleteLessor(string id)
         {
             await _service.DeleteLessor(id);

@@ -150,20 +150,19 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessor.Profession,
                 lessor.Email,
                 newLessor.UserType,
-                newLessor.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList(),
-                newLessor.Cars.Select(c => new CarResponseDto (
-                    c.Id,
-                    c.Brand,
-                    c.Model,
-                    c.PricePerDay,
-                    c.IsRented,
-                    c.LessorId
-                )).ToList()
+                newLessor
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList(),
+                newLessor
+                    .Cars.Select(c => new CarResponseDto(
+                        c.Id,
+                        c.Brand,
+                        c.Model,
+                        c.PricePerDay,
+                        c.IsRented,
+                        c.LessorId
+                    ))
+                    .ToList()
             );
         }
 
@@ -177,12 +176,9 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.Profession,
                 lessee.Email,
                 newLessee.UserType,
-                newLessee.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList()
+                newLessee
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList()
             );
         }
 
@@ -196,12 +192,9 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.Profession,
                 lessee.Email!,
                 lessee.UserType,
-                lessee.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList()
+                lessee
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList()
             );
         }
 
@@ -216,20 +209,19 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessor.Profession,
                 lessor.Email!,
                 lessor.UserType,
-                lessor1.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList(),
-                lessor1.Cars.Select(c => new CarResponseDto (
-                    c.Id,
-                    c.Brand,
-                    c.Model,
-                    c.PricePerDay,
-                    c.IsRented,
-                    c.LessorId
-                )).ToList()
+                lessor1
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList(),
+                lessor1
+                    .Cars.Select(c => new CarResponseDto(
+                        c.Id,
+                        c.Brand,
+                        c.Model,
+                        c.PricePerDay,
+                        c.IsRented,
+                        c.LessorId
+                    ))
+                    .ToList()
             );
         }
 
@@ -249,20 +241,19 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessor.HouseNumber,
                 lessor.PostalCode,
                 lessor.UserType,
-                lessor1.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList(),
-                lessor1.Cars.Select(c => new CarResponseDto (
-                    c.Id,
-                    c.Brand,
-                    c.Model,
-                    c.PricePerDay,
-                    c.IsRented,
-                    c.LessorId
-                )).ToList()
+                lessor1
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList(),
+                lessor1
+                    .Cars.Select(c => new CarResponseDto(
+                        c.Id,
+                        c.Brand,
+                        c.Model,
+                        c.PricePerDay,
+                        c.IsRented,
+                        c.LessorId
+                    ))
+                    .ToList()
             );
         }
 
@@ -281,12 +272,9 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.HouseNumber,
                 lessee.PostalCode,
                 lessee.UserType,
-                lessee.Rentals.Select(r => new RentalInfo (
-                    r.Id,
-                    r.StartDate,
-                    r.EndDate,
-                    r.TotalPrice
-                )).ToList()
+                lessee
+                    .Rentals.Select(r => new RentalInfo(r.Id, r.StartDate, r.EndDate, r.TotalPrice))
+                    .ToList()
             );
         }
     }

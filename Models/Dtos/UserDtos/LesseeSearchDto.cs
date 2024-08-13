@@ -1,4 +1,3 @@
-
 using EasyWheelsApi.Models.Dtos.RentalDtos;
 
 namespace EasyWheelsApi.Models.Dtos.UserDtos
