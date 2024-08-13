@@ -1,3 +1,4 @@
+using EasyWheelsApi.Models.Dtos.RentalDtos;
 using EasyWheelsApi.Models.Entities;
 
 namespace EasyWheelsApi.Models.Dtos.UserDtos
@@ -10,6 +11,6 @@ namespace EasyWheelsApi.Models.Dtos.UserDtos
         string Profession,
         string Email,
         string Usertype,
-        List<Rental>? Rentals
+        List<RentalInfo>? Rentals
     );
 }

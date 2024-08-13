@@ -4,6 +4,8 @@ using EasyWheelsApi.Models.Dtos.UserMapping;
 using EasyWheelsApi.Models.Dtos.ViaCep;
 using EasyWheelsApi.Models.Entities;
 using EasyWheelsApi.Services.Interfaces;
+using EasyWheelsApi.Validation.AddressValidation;
+using EasyWheelsApi.Validation.UserValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,18 +19,36 @@ namespace EasyWheelsApi.Services.Impl
 
         public async Task<Lessee> CreateLesseeAsync(AddUserDto lessee, string password)
         {
-            var cep = new CepDto(lessee.PostalCode);
-            var addressDto = await _addressFacade.CompleteAddressAsync(cep);
+            if (
+                lessee.Street!.IsValidAddress()
+                || lessee.City!.IsValidAddress()
+                || lessee.State!.IsValidAddress()
+            )
+            {
+                var cep = new CepDto(lessee.PostalCode);
+                var addressDto = await _addressFacade.CompleteAddressAsync(cep);
 
-            var newLessee = lessee.ToEntityLessee(addressDto);
-            await _userManager.CreateAsync(newLessee, password);
-            return newLessee!;
+                if (addressDto.IsValid())
+                    throw new CustomException(
+                        "Address not found",
+                        "The given postal code does not return any matches, please write the complete address or provide a different postal code",
+                        StatusCodes.Status404NotFound
+                    );
+
+                var newLessee = lessee.ToEntityLessee(addressDto);
+                await _userManager.CreateAsync(newLessee, password);
+                return newLessee!;
+            }
+
+            var parsedLessee = lessee.ToEntityLessee();
+            await _userManager.CreateAsync(parsedLessee, password);
+            return parsedLessee!;
         }
 
         public async Task<bool> DeleteLessee(string id)
         {
             var lessee = await _userManager.FindByIdAsync(id);
-            
+
             if (lessee == null)
             {
                 return false;
@@ -41,16 +61,15 @@ namespace EasyWheelsApi.Services.Impl
         public IQueryable<LesseeResponseDto> GetAllLesseesAsync()
         {
             return _userManager
-                .Users
-                .OfType<Lessee>()
+                .Users.OfType<Lessee>()
                 .Include(r => r.Rentals)
                 .Select(l => l.ToResponseLessee());
         }
 
         public async Task<Lessee> GetLesseeByidAsync(string id)
         {
-            var lessee = await _userManager.Users
-                .OfType<Lessee>()
+            var lessee = await _userManager
+                .Users.OfType<Lessee>()
                 .Include(r => r.Rentals)
                 .FirstOrDefaultAsync(l => l.Id == id);
             return lessee!;

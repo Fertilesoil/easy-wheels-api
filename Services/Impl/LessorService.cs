@@ -33,7 +33,7 @@ namespace EasyWheelsApi.Services.Impl
                 if (addressDto.IsValid())
                     throw new CustomException(
                         "Address not found",
-                        "The given postal code does not return any matches, please write the complete address",
+                        "The given postal code does not return any matches, please write the complete address or provide a different postal code",
                         StatusCodes.Status404NotFound
                     );
 

@@ -77,6 +77,29 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
             return newLessee;
         }
 
+        public static Lessee ToEntityLessee(this AddUserDto lessee)
+        {
+            Lessee newLessee =
+                new()
+                {
+                    UserName = lessee.Username,
+                    FirstName = lessee.FirstName,
+                    LastName = lessee.LastName,
+                    Nationality = lessee.Nationality,
+                    Profession = lessee.Profession,
+                    Email = lessee.Email,
+                    Rg = lessee.Rg,
+                    Cpf = lessee.Cpf,
+                    City = lessee.City,
+                    State = lessee.State,
+                    Street = lessee.Street,
+                    HouseNumber = lessee.HouseNumber,
+                    PostalCode = lessee.PostalCode,
+                    UserType = "Lessee"
+                };
+            return newLessee;
+        }
+
         public static Lessor ToEntity(this UpdateUserDto lessor, Lessor oldLessor)
         {
             return new Lessor()
@@ -154,7 +177,12 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.Profession,
                 lessee.Email,
                 newLessee.UserType,
-                newLessee.Rentals
+                newLessee.Rentals.Select(r => new RentalInfo (
+                    r.Id,
+                    r.StartDate,
+                    r.EndDate,
+                    r.TotalPrice
+                )).ToList()
             );
         }
 
@@ -168,7 +196,12 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.Profession,
                 lessee.Email!,
                 lessee.UserType,
-                lessee.Rentals
+                lessee.Rentals.Select(r => new RentalInfo (
+                    r.Id,
+                    r.StartDate,
+                    r.EndDate,
+                    r.TotalPrice
+                )).ToList()
             );
         }
 
@@ -248,7 +281,12 @@ namespace EasyWheelsApi.Models.Dtos.UserMapping
                 lessee.HouseNumber,
                 lessee.PostalCode,
                 lessee.UserType,
-                lessee.Rentals
+                lessee.Rentals.Select(r => new RentalInfo (
+                    r.Id,
+                    r.StartDate,
+                    r.EndDate,
+                    r.TotalPrice
+                )).ToList()
             );
         }
     }

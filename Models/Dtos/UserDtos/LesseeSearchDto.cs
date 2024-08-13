@@ -1,5 +1,5 @@
 
-using EasyWheelsApi.Models.Entities;
+using EasyWheelsApi.Models.Dtos.RentalDtos;
 
 namespace EasyWheelsApi.Models.Dtos.UserDtos
 {
@@ -16,6 +16,6 @@ namespace EasyWheelsApi.Models.Dtos.UserDtos
         int HouseNumber,
         string PostalCode,
         string UserType,
-        List<Rental> Rentals
+        List<RentalInfo> Rentals
     );
 }
