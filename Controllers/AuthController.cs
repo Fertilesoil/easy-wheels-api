@@ -22,7 +22,7 @@ namespace EasyWheelsApi.Controllers
         private readonly IConfiguration _configuration = configuration;
         private const string REFRESH = "refreshtoken";
 
-        private sealed record SuccessDto(string AccessToken);
+        private sealed record TokenDto(string AccessToken);
 
         [HttpPost("login")]
         [SwaggerOperation(
@@ -30,7 +30,7 @@ namespace EasyWheelsApi.Controllers
             Description = "Endpoint para login de usuários. A operação retorna um token JWT válido para liberar o consumo dos recursos da aplicação."
         )]
         [
-            SwaggerResponse(200, "Success", typeof(SuccessDto)),
+            SwaggerResponse(200, "Success", typeof(TokenDto)),
             SwaggerResponse(401, "Unauthorized", typeof(CustomExceptionDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
@@ -79,7 +79,7 @@ namespace EasyWheelsApi.Controllers
             );
 
             await _userManager.UpdateAsync(userFound!);
-            return Ok(JsonConvert.SerializeObject(new { AccessToken = "Bearer " + accessToken }, Formatting.Indented));
+            return Ok(JsonConvert.SerializeObject(new TokenDto("Bearer " + accessToken ), Formatting.Indented));
         }
 
         [HttpPost("logout")]

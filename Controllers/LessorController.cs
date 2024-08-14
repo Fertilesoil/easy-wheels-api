@@ -17,8 +17,6 @@ namespace EasyWheelsApi.Controllers
     {
         private readonly ILessorService _service = service;
 
-        private sealed record SuccessDto(string Message);
-
         [Authorize]
         [HttpGet]
         [SwaggerOperation(
@@ -72,6 +70,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(200, "Success", typeof(UserResponseDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+            SwaggerResponse(400, "Bad Request")
         ]
         public async Task<IActionResult> CreateLessor([FromBody] AddUserDto lessor)
         {
@@ -89,6 +88,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(200, "Success", typeof(SuccessDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+            SwaggerResponse(400, "Bad Request")
         ]
         public async Task<IActionResult> UpdateLessor(
             string id,
@@ -113,7 +113,7 @@ namespace EasyWheelsApi.Controllers
             Summary = "Deletar um Locador",
             Description = "A operação deleta um Locador já registrado do banco de dados. A busca é baseada no Id do Locador e não retornará erros se o Locador não existir."
         )]
-        [SwaggerResponse(200, "Success", typeof(UserResponseDto))]
+        [SwaggerResponse(200, "Success")]
         public async Task<IActionResult> DeleteLessor(string id)
         {
             await _service.DeleteLessor(id);

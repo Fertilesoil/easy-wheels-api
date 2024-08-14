@@ -16,7 +16,6 @@ namespace EasyWheelsApi.Controllers
     public class LesseeController(ILesseeService service) : ControllerBase
     {
         private readonly ILesseeService _service = service;
-        private sealed record SuccessDto(string Message);
 
         [Authorize]
         [HttpGet]
@@ -70,6 +69,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(200, "Success", typeof(LesseeResponseDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+            SwaggerResponse(400, "Bad Request")
         ]
         public async Task<IActionResult> CreateLessee([FromBody] AddUserDto lessee)
         {
@@ -89,6 +89,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(200, "Success", typeof(SuccessDto)),
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+            SwaggerResponse(400, "Bad Request")
         ]
         public async Task<IActionResult> UpdateLessee(
             string id,
@@ -112,7 +113,7 @@ namespace EasyWheelsApi.Controllers
             Summary = "Deletar um Locatário",
             Description = "A operação deleta um Locatário já registrado do banco de dados. A busca é baseada no Id do Locatário e não retornará erros se o Locatário não existir."
         )]
-        [SwaggerResponse(200, "Success", typeof(UserResponseDto))]
+        [SwaggerResponse(200, "Success")]
         public async Task<IActionResult> DeleteLessee(string id)
         {
             await _service.DeleteLessee(id);
