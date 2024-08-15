@@ -11,5 +11,6 @@ namespace EasyWheelsApi.Services.Interfaces
         Task UpdateLessorAsync(Lessor updatedLessor, Lessor actualUser);
         Task<Lessor> CreateLessorAsync(AddUserDto lessor, string password);
         Task<bool> DeleteLessor(string id);
+        Task<Lessor> GetLessorByEmail(string email);
     }
 }

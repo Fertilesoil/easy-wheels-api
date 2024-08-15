@@ -61,6 +61,30 @@ namespace EasyWheelsApi.Controllers
             return Ok(JsonConvert.SerializeObject(lessor.ToSearchResponse(), Formatting.Indented));
         }
 
+        [Authorize]
+        [HttpGet("{email}", Name = "LessorPerId")]
+        [SwaggerOperation(
+            Summary = "Buscar um Locador por Email",
+            Description = "A operação retorna um Locador cadastrado."
+        )]
+        [
+            SwaggerResponse(200, "Success", typeof(UserSearchDto)),
+            SwaggerResponse(401, "Unauthorized", typeof(CustomExceptionDto)),
+            SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
+            SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
+        ]
+        public async Task<IActionResult> GetLessorByEmail(string email)
+        {
+            var lessor =
+                await _service.GetLessorByEmail(email)
+                ?? throw new CustomException(
+                    "Lessor not found",
+                    "None lessor was found with those parameters",
+                    StatusCodes.Status404NotFound
+                );
+            return Ok(JsonConvert.SerializeObject(lessor.ToSearchResponse(), Formatting.Indented));
+        }
+
         [HttpPost]
         [SwaggerOperation(
             Summary = "Criar um novo Locador",

@@ -90,6 +90,17 @@ namespace EasyWheelsApi.Services.Impl
                 ));
         }
 
+        public async Task<Lessor> GetLessorByEmail(string email)
+        {
+            var lessor = await _userManager
+                .Users.OfType<Lessor>()
+                .Include(c => c.Cars)
+                .ThenInclude(r => r.Rentals)
+                .AsSplitQuery()
+                .FirstOrDefaultAsync(l => l.Email == email);
+            return lessor!;
+        }
+
         public async Task<Lessor> GetLessorByidAsync(string id)
         {
             var lessor = await _userManager
