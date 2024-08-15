@@ -7,14 +7,14 @@ namespace EasyWheelsApi.Validation.CarValidation
     {
         public static void IsValid(this AddCarDto car)
         {
-            if (string.IsNullOrEmpty(car.Brand))
+            if (string.IsNullOrEmpty(car.Brand) || car.Brand == "string")
                 throw new CustomException(
                     "Missing field",
                     "The field Brand cannot not be empty",
                     StatusCodes.Status400BadRequest
                 );
 
-            if (string.IsNullOrEmpty(car.Model))
+            if (string.IsNullOrEmpty(car.Model) || car.Brand == "string")
                 throw new CustomException(
                     "Missing field",
                     "The field Model cannot not be empty",

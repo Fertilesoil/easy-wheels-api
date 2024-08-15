@@ -226,6 +226,8 @@ else
     });
 }
 
+app.UseCors("MyPolicy");
+
 app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
