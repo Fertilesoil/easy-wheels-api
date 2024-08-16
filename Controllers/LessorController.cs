@@ -62,7 +62,7 @@ namespace EasyWheelsApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{email}", Name = "LessorPerId")]
+        [HttpGet("{email}", Name = "LessorPerEmail")]
         [SwaggerOperation(
             Summary = "Buscar um Locador por Email",
             Description = "A operação retorna um Locador cadastrado."

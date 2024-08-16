@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Models.Dtos;
 using EasyWheelsApi.Models.Dtos.UserDtos;
@@ -79,7 +80,12 @@ namespace EasyWheelsApi.Controllers
             );
 
             await _userManager.UpdateAsync(userFound!);
-            return Ok(JsonConvert.SerializeObject(new TokenDto("Bearer " + accessToken ), Formatting.Indented));
+            return Ok(
+                JsonConvert.SerializeObject(
+                    new TokenDto("Bearer " + accessToken),
+                    Formatting.Indented
+                )
+            );
         }
 
         [HttpPost("logout")]
@@ -126,7 +132,7 @@ namespace EasyWheelsApi.Controllers
             );
         }
 
-        [HttpPost("refresh-token")]
+        [HttpGet("refresh-token")]
         [SwaggerOperation(
             Summary = "Refresh Token",
             Description = "Endpoint para renovar autenticação. A operação retorna um novo token JWT para continuar consumindo os recursos da aplicação."
@@ -137,24 +143,42 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto))
         ]
-        public async Task<IActionResult> RefreshToken([FromBody] EmailDto email)
+        public async Task<IActionResult> RefreshToken()
         {
-            if (!Request.Cookies.TryGetValue(REFRESH, out var refreshtoken))
+            if (!Request.Cookies.TryGetValue(REFRESH, out var refreshToken))
                 throw new CustomException(
                     "Missing refresh token",
                     "No valid refresh tokens were found, please try log in again",
                     StatusCodes.Status401Unauthorized
                 );
 
+            ClaimsPrincipal principal;
+            TokenConfiguration token = new(_configuration);
+
+            principal =
+                token.GetPrincipalFromExpiredToken(refreshToken)
+                ?? throw new CustomException(
+                    "Invalid token",
+                    "The provided refresh token is invalid",
+                    StatusCodes.Status401Unauthorized
+                );
+
+            var userEmail = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userEmail == null)
+                throw new CustomException(
+                    "Invalid token",
+                    "The provided token does not contain a valid user ID",
+                    StatusCodes.Status401Unauthorized
+                );
+
             var userFound =
-                await _userManager.FindByEmailAsync(email.Email)
+                await _userManager.FindByEmailAsync(userEmail)
                 ?? throw new CustomException(
                     "No user found",
                     "No such user was found with those parameters",
                     StatusCodes.Status404NotFound
                 );
-
-            TokenConfiguration token = new(_configuration);
 
             var newAccessToken = token.GenerateJwtToken(userFound);
 
