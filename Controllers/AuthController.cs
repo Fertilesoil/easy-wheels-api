@@ -65,8 +65,6 @@ namespace EasyWheelsApi.Controllers
             var accessToken = token.GenerateJwtToken(userFound!);
             var refreshToken = token.GenerateRefreshToken(userFound!);
 
-            // Response.Cookies.Delete(REFRESH);
-
             Response.Cookies.Append(
                 REFRESH,
                 refreshToken,
@@ -75,7 +73,8 @@ namespace EasyWheelsApi.Controllers
                     HttpOnly = true,
                     Secure = true,
                     Expires = DateTime.UtcNow.AddDays(3),
-                    SameSite = SameSiteMode.None
+                    SameSite = SameSiteMode.None,
+                    Path = "/"
                 }
             );
 
