@@ -75,8 +75,7 @@ namespace EasyWheelsApi.Controllers
                     HttpOnly = true,
                     Secure = true,
                     Expires = DateTime.UtcNow.AddDays(3),
-                    Domain = "https://localhost:5173",
-                    SameSite = SameSiteMode.Lax
+                    SameSite = SameSiteMode.None
                 }
             );
 
