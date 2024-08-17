@@ -227,9 +227,10 @@ else
     });
 }
 
+app.UseHttpsRedirection();
+
 app.UseCors("MyPolicy");
 
-app.UseHttpsRedirection();
 app.UseExceptionHandler();
 app.UseAuthentication();
 app.UseAuthorization();
