@@ -75,7 +75,7 @@ namespace EasyWheelsApi.Controllers
                     HttpOnly = true,
                     Secure = true,
                     Expires = DateTime.UtcNow.AddDays(3),
-                    SameSite = SameSiteMode.Lax
+                    SameSite = SameSiteMode.None
                 }
             );
 
