@@ -177,7 +177,7 @@ builder.Services.AddCors(options =>
         name: "MyPolicy",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173", "https://easy-wheels-api.onrender.com");
+            policy.WithOrigins("https://localhost:5173");
             policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
         }
     );
