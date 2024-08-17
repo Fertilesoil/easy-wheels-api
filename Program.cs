@@ -177,7 +177,7 @@ builder.Services.AddCors(options =>
         name: "MyPolicy",
         policy =>
         {
-            policy.WithOrigins("https://localhost:5173", "https://easy-wheels-front.vercel.app/");
+            policy.WithOrigins("https://localhost:5173", "https://easy-wheels-front.vercel.app");
             policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials();
         }
     );
