@@ -65,7 +65,7 @@ namespace EasyWheelsApi.Controllers
             var accessToken = token.GenerateJwtToken(userFound!);
             var refreshToken = token.GenerateRefreshToken(userFound!);
 
-            Response.Cookies.Delete(REFRESH);
+            // Response.Cookies.Delete(REFRESH);
 
             Response.Cookies.Append(
                 REFRESH,
