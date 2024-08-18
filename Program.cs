@@ -132,21 +132,21 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequiredUniqueChars = 0;
     options.Password.RequiredLength = 8;
-    options.User.RequireUniqueEmail = false;
+    options.User.RequireUniqueEmail = true;
 });
 
 // Configuração para o uso de Cookies
 
-// builder.Services.ConfigureApplicationCookie(options =>
-// {
-//     options.LoginPath = "/api/Auth/login";
-//     options.LogoutPath = "/api/Auth/logout";
-//     options.ExpireTimeSpan = TimeSpan.FromDays(3);
-//     options.SlidingExpiration = true;
-//     options.Cookie.HttpOnly = true;
-//     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-//     options.Cookie.SameSite = SameSiteMode.None;
-// });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/api/Auth/login";
+    options.LogoutPath = "/api/Auth/logout";
+    options.ExpireTimeSpan = TimeSpan.FromDays(3);
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.None;
+});
 
 // Configuração do Authentication para o uso de Cookies e Jwt
 
@@ -171,20 +171,34 @@ builder
             ValidAudience = jwtSettings["Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(key)
         };
-    })
-    .AddCookie(
-        CookieAuthenticationDefaults.AuthenticationScheme,
-        options =>
-        {
-            options.LoginPath = "/api/Auth/login";
-            options.LogoutPath = "/api/Auth/logout";
-            options.ExpireTimeSpan = TimeSpan.FromDays(3);
-            options.SlidingExpiration = true;
-            options.Cookie.HttpOnly = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-            options.Cookie.SameSite = SameSiteMode.None;
-        }
-    );
+    });
+
+builder
+    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/api/Auth/login";
+        options.LogoutPath = "/api/Auth/logout";
+        options.ExpireTimeSpan = TimeSpan.FromDays(3);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.SameSite = SameSiteMode.None;
+    });
+
+// .AddCookie(
+//     CookieAuthenticationDefaults.AuthenticationScheme,
+//     options =>
+//     {
+//         options.LoginPath = "/api/Auth/login";
+//         options.LogoutPath = "/api/Auth/logout";
+//         options.ExpireTimeSpan = TimeSpan.FromDays(3);
+//         options.SlidingExpiration = true;
+//         options.Cookie.HttpOnly = true;
+//         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//         options.Cookie.SameSite = SameSiteMode.None;
+//     }
+// );
 
 builder.Services.AddCors(options =>
 {

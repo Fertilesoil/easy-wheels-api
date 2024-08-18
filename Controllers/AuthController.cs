@@ -65,6 +65,8 @@ namespace EasyWheelsApi.Controllers
             var accessToken = token.GenerateJwtToken(userFound!);
             var refreshToken = token.GenerateRefreshToken(userFound!);
 
+            await _signInManager.SignInAsync(userFound, isPersistent: true);
+
             Response.Cookies.Append(
                 REFRESH,
                 refreshToken,
@@ -108,20 +110,9 @@ namespace EasyWheelsApi.Controllers
                 );
             }
 
-            var refreshToken = Request.Cookies[REFRESH];
-
-            if (string.IsNullOrEmpty(refreshToken))
-            {
-                return Ok(
-                    JsonConvert.SerializeObject(
-                        new { Message = "Logout successful, no refresh token found." },
-                        Formatting.Indented
-                    )
-                );
-            }
+            Response.Cookies.Delete(REFRESH);
 
             await _signInManager.SignOutAsync();
-            Response.Cookies.Delete(REFRESH);
 
             return Ok(
                 JsonConvert.SerializeObject(
@@ -144,35 +135,30 @@ namespace EasyWheelsApi.Controllers
         ]
         public async Task<IActionResult> RefreshToken()
         {
-            if (!Request.Cookies.TryGetValue(REFRESH, out var refreshToken))
+            if (!Request.Cookies.ContainsKey(REFRESH))
+            {
                 throw new CustomException(
-                    "Missing refresh token",
-                    "No valid refresh tokens were found, please try log in again",
+                    "Missing authentication cookie",
+                    "The required authentication cookie is not present. Please log in again.",
                     StatusCodes.Status401Unauthorized
                 );
+            }
 
-            ClaimsPrincipal principal;
             TokenConfiguration token = new(_configuration);
 
-            principal =
-                token.GetPrincipalFromExpiredToken(refreshToken)
-                ?? throw new CustomException(
-                    "Invalid token",
-                    "The provided refresh token is invalid",
-                    StatusCodes.Status401Unauthorized
-                );
+            var refreshToken = Request.Cookies[REFRESH];
+            var principal = token.ValidateRefreshToken(refreshToken!);
 
             var userEmail = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (userEmail == null)
+            if (string.IsNullOrEmpty(userEmail))
                 throw new CustomException(
                     "Invalid token",
-                    "The provided token does not contain a valid user ID",
+                    "Invalid claims in token",
                     StatusCodes.Status401Unauthorized
                 );
 
             var userFound =
-                await _userManager.FindByEmailAsync(userEmail)
+                await _userManager.FindByEmailAsync(userEmail!)
                 ?? throw new CustomException(
                     "No user found",
                     "No such user was found with those parameters",

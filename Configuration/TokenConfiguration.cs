@@ -62,17 +62,39 @@ namespace EasyWheelsApi.Configuration
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        public ClaimsPrincipal ValidateRefreshToken(string refreshToken)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+
+                var principal = tokenHandler.ValidateToken(
+                    refreshToken,
+                    new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        ValidateLifetime = false,
+                        ClockSkew = TimeSpan.Zero
+                    },
+                    out SecurityToken validatedToken
+                );
+
+                return principal;
+        }
+
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
             var tokenValidationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false, 
-                ValidateIssuer = false, 
+                ValidateAudience = false,
+                ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!)
                 ),
-                ValidateLifetime = false, 
+                ValidateLifetime = false,
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

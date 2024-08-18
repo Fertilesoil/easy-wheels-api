@@ -1,5 +1,28 @@
 ﻿{
   "$schema": "http://json.schemastore.org/launchsettings.json",
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Core Launch (web)",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "C:/Users/user/Desktop/CloneWheels/EasyWheelsApi/bin/Debug/net8.0/EasyWheels.dll",
+      "args": [],
+      "cwd": "C:/Users/user/Desktop/CloneWheels/EasyWheelsApi/",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    }
+  ],
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
@@ -25,6 +48,15 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "https": {
+        "commandName": "Project",
+        "dotnetRunMessages": true,
+        "launchBrowser": true,
+        "applicationUrl": "https://localhost:5001;http://localhost:5000",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Development"
+        }
       }
     }
   }
