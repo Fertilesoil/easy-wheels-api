@@ -3,6 +3,8 @@ using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Models.Dtos;
 using EasyWheelsApi.Models.Dtos.UserDtos;
 using EasyWheelsApi.Models.Entities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -46,41 +48,104 @@ namespace EasyWheelsApi.Controllers
                     StatusCodes.Status404NotFound
                 );
 
-            var result = await _signInManager.PasswordSignInAsync(
-                userFound!,
+            var result = await _signInManager.CheckPasswordSignInAsync(
+                userFound,
                 user.Password,
-                isPersistent: false,
                 lockoutOnFailure: false
             );
 
             if (!result.Succeeded)
+            {
                 throw new CustomException(
                     "Password issue",
                     "The passwords don't match",
                     StatusCodes.Status401Unauthorized
                 );
+            }
 
-            TokenConfiguration token = new(_configuration);
+            var identity = new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userFound.Id.ToString()),
+                    new Claim(ClaimTypes.Email, userFound.Email!)
+                }
+            );
 
-            var accessToken = token.GenerateJwtToken(userFound!);
-            var refreshToken = token.GenerateRefreshToken(userFound!);
+            var tokenService = new TokenConfiguration(_configuration);
+            var accessToken = tokenService.GenerateJwtToken(userFound);
+            var refreshToken = tokenService.GenerateRefreshToken(userFound);
 
-            await _signInManager.SignInAsync(userFound, isPersistent: true);
-
+            // Adiciona o Access Token como um cookie HTTP-Only
             Response.Cookies.Append(
-                REFRESH,
+                "AccessToken",
+                accessToken,
+                new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true, // Deve ser true em produção
+                    Expires = DateTime.UtcNow.AddMinutes(5),
+                    SameSite = SameSiteMode.None
+                }
+            );
+
+            // Adiciona o Refresh Token como um cookie HTTP-Only
+            Response.Cookies.Append(
+                "RefreshToken",
                 refreshToken,
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = true, // Deve ser true em produção
                     Expires = DateTime.UtcNow.AddDays(3),
-                    SameSite = SameSiteMode.Lax,
-                    Path = "/"
+                    SameSite = SameSiteMode.None
                 }
             );
 
-            await _userManager.UpdateAsync(userFound!);
+            // return Ok(new { Message = "Login successful" });
+
+            // var userFound =
+            //     await _userManager.FindByEmailAsync(user.Email)
+            //     ?? throw new CustomException(
+            //         "User not found",
+            //         "No such user was found with those parameters",
+            //         StatusCodes.Status404NotFound
+            //     );
+
+            // var result = await _signInManager.PasswordSignInAsync(
+            //     userFound!,
+            //     user.Password,
+            //     isPersistent: false,
+            //     lockoutOnFailure: false
+            // );
+
+            // if (!result.Succeeded)
+            //     throw new CustomException(
+            //         "Password issue",
+            //         "The passwords don't match",
+            //         StatusCodes.Status401Unauthorized
+            //     );
+
+            // TokenConfiguration token = new(_configuration);
+
+            // var accessToken = token.GenerateJwtToken(userFound!);
+            // var refreshToken = token.GenerateRefreshToken(userFound!);
+
+            // await _signInManager.SignInAsync(userFound, isPersistent: true);
+
+            // Response.Cookies.Append(
+            //     REFRESH,
+            //     refreshToken,
+            //     new CookieOptions
+            //     {
+            //         HttpOnly = true,
+            //         Secure = true,
+            //         Expires = DateTime.UtcNow.AddDays(3),
+            //         SameSite = SameSiteMode.Lax,
+            //         Path = "/"
+            //     }
+            // );
+
+            // await _userManager.UpdateAsync(userFound!);
             return Ok(
                 JsonConvert.SerializeObject(
                     new TokenDto("Bearer " + accessToken),
@@ -110,9 +175,12 @@ namespace EasyWheelsApi.Controllers
                 );
             }
 
-            Response.Cookies.Delete(REFRESH);
+            Response.Cookies.Delete("AccessToken");
+            Response.Cookies.Delete("RefreshToken");
 
-            await _signInManager.SignOutAsync();
+            // Response.Cookies.Delete(REFRESH);
+
+            // await _signInManager.SignOutAsync();
 
             return Ok(
                 JsonConvert.SerializeObject(
@@ -135,19 +203,14 @@ namespace EasyWheelsApi.Controllers
         ]
         public async Task<IActionResult> RefreshToken()
         {
-            if (!Request.Cookies.ContainsKey(REFRESH))
-            {
-                throw new CustomException(
-                    "Missing authentication cookie",
-                    "The required authentication cookie is not present. Please log in again.",
-                    StatusCodes.Status401Unauthorized
-                );
-            }
+            var tokenService = new TokenConfiguration(_configuration);
 
-            TokenConfiguration token = new(_configuration);
+            if (!Request.Cookies.ContainsKey("RefreshToken"))
+                return Unauthorized(new { Message = "Refresh token not found" });
 
-            var refreshToken = Request.Cookies[REFRESH];
-            var principal = token.ValidateRefreshToken(refreshToken!);
+            var refreshToken = Request.Cookies["RefreshToken"];
+
+            var principal = tokenService.ValidateRefreshToken(refreshToken!);
 
             var userEmail = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userEmail))
@@ -165,7 +228,39 @@ namespace EasyWheelsApi.Controllers
                     StatusCodes.Status404NotFound
                 );
 
-            var newAccessToken = token.GenerateJwtToken(userFound);
+            var newAccessToken = tokenService.GenerateJwtToken(userFound);
+
+            // if (!Request.Cookies.ContainsKey(REFRESH))
+            // {
+            //     throw new CustomException(
+            //         "Missing authentication cookie",
+            //         "The required authentication cookie is not present. Please log in again.",
+            //         StatusCodes.Status401Unauthorized
+            //     );
+            // }
+
+            // TokenConfiguration token = new(_configuration);
+
+            // var refreshToken = Request.Cookies[REFRESH];
+            // var principal = token.ValidateRefreshToken(refreshToken!);
+
+            // var userEmail = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            // if (string.IsNullOrEmpty(userEmail))
+            //     throw new CustomException(
+            //         "Invalid token",
+            //         "Invalid claims in token",
+            //         StatusCodes.Status401Unauthorized
+            //     );
+
+            // var userFound =
+            //     await _userManager.FindByEmailAsync(userEmail!)
+            //     ?? throw new CustomException(
+            //         "No user found",
+            //         "No such user was found with those parameters",
+            //         StatusCodes.Status404NotFound
+            //     );
+
+            // var newAccessToken = token.GenerateJwtToken(userFound);
 
             return Ok(
                 JsonConvert.SerializeObject(

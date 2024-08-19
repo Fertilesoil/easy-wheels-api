@@ -1,5 +1,4 @@
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using EasyWheelsApi.Data;
 using EasyWheelsApi.Facade;
@@ -133,59 +132,110 @@ builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequiredUniqueChars = 0;
     options.Password.RequiredLength = 8;
-    options.User.RequireUniqueEmail = true;
+    options.User.RequireUniqueEmail = false;
 });
 
 // Configuração para o uso de Cookies
 
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/api/Auth/login";
-    options.LogoutPath = "/api/Auth/logout";
-    options.ExpireTimeSpan = TimeSpan.FromDays(3);
-    options.SlidingExpiration = true;
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-    options.Cookie.SameSite = SameSiteMode.Lax;
-});
+// builder.Services.ConfigureApplicationCookie(options =>
+// {
+//     options.LoginPath = "/api/Auth/login";
+//     options.LogoutPath = "/api/Auth/logout";
+//     options.ExpireTimeSpan = TimeSpan.FromDays(3);
+//     options.SlidingExpiration = true;
+//     options.Cookie.HttpOnly = true;
+//     options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//     options.Cookie.SameSite = SameSiteMode.Lax;
+// });
 
 // Configuração do Authentication para o uso de Cookies e Jwt
 
-var jwtSettings = builder.Configuration.GetSection("Jwt");
-var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
+// var jwtSettings = builder.Configuration.GetSection("Jwt");
+// var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
 
-builder
-    .Services.AddAuthentication(options =>
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+    };
+
+    // Permite a extração do token JWT a partir de um cookie
+    options.Events = new JwtBearerEvents
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        OnMessageReceived = context =>
         {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtSettings["Issuer"],
-            ValidAudience = jwtSettings["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(key)
-        };
-    });
-
-builder
-    .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options =>
+            if (context.Request.Cookies.ContainsKey("AccessToken"))
+            {
+                context.Token = context.Request.Cookies["AccessToken"];
+            }
+            return Task.CompletedTask;
+        }
+    };
+})
+.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Somente HTTPS
+    options.Cookie.SameSite = SameSiteMode.None; // Protege contra CSRF
+    options.Cookie.Name = "YourAppCookie";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(5); // Expira em 5 minutos
+    options.SlidingExpiration = true; // Renovação automática do cookie
+    options.Events = new CookieAuthenticationEvents
     {
-        options.LoginPath = "/api/Auth/login";
-        options.LogoutPath = "/api/Auth/logout";
-        options.ExpireTimeSpan = TimeSpan.FromDays(3);
-        options.SlidingExpiration = true;
-        options.Cookie.HttpOnly = true;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
-        options.Cookie.SameSite = SameSiteMode.Lax;
-    });
+        OnRedirectToLogin = context =>
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return Task.CompletedTask;
+        }
+    };
+});
+
+
+
+// builder
+//     .Services.AddAuthentication(options =>
+//     {
+//         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//     })
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = true,
+//             ValidateAudience = true,
+//             ValidateLifetime = true,
+//             ValidateIssuerSigningKey = true,
+//             ValidIssuer = jwtSettings["Issuer"],
+//             ValidAudience = jwtSettings["Audience"],
+//             IssuerSigningKey = new SymmetricSecurityKey(key)
+//         };
+//     });
+
+// builder
+//     .Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//     .AddCookie(options =>
+//     {
+//         options.LoginPath = "/api/Auth/login";
+//         options.LogoutPath = "/api/Auth/logout";
+//         options.ExpireTimeSpan = TimeSpan.FromDays(3);
+//         options.SlidingExpiration = true;
+//         options.Cookie.HttpOnly = true;
+//         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+//         options.Cookie.SameSite = SameSiteMode.Lax;
+//     });
 
 // .AddCookie(
 //     CookieAuthenticationDefaults.AuthenticationScheme,
