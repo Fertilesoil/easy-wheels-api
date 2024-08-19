@@ -76,7 +76,7 @@ namespace EasyWheelsApi.Controllers
             var refreshToken = tokenService.GenerateRefreshToken(userFound);
 
             var brazilTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
-                "E. America/Sao_Paulo"
+                "America/Sao_Paulo"
             );
 
             // Obter a hora atual no fuso horário do Brasil
