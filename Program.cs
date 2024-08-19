@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Data;
 using EasyWheelsApi.Facade;
 using EasyWheelsApi.GlobalExceptionHandler;
@@ -153,47 +154,67 @@ builder.Services.Configure<IdentityOptions>(options =>
 // var jwtSettings = builder.Configuration.GetSection("Jwt");
 // var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]!);
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+builder
+    .Services.AddAuthentication(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
-    };
-
-    // Permite a extração do token JWT a partir de um cookie
-    options.Events = new JwtBearerEvents
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
     {
-        OnMessageReceived = context =>
+        options.TokenValidationParameters = new TokenValidationParameters
         {
-            context.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
-            if (!string.IsNullOrEmpty(refreshToken))
-                context.Token = refreshToken;
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)
+            )
+        };
 
-            return Task.CompletedTask;
+        // Permite a extração do token JWT a partir de um cookie
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                context.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
+                if (!string.IsNullOrEmpty(refreshToken))
+                    context.Token = refreshToken;
+
+                return Task.CompletedTask;
+            }
+            // OnMessageReceived = context =>
+            // {
+            //     if (context.Request.Cookies.ContainsKey("AccessToken"))
+            //     {
+            //         context.Token = context.Request.Cookies["AccessToken"];
+            //     }
+            //     return Task.CompletedTask;
+            // }
+        };
+    })
+    .AddCookie(
+        CookieAuthenticationDefaults.AuthenticationScheme,
+        options =>
+        {
+            options.ExpireTimeSpan = TimeSpan.FromDays(3);
+            options.SlidingExpiration = true;
+            options.Cookie.HttpOnly = true; // Para segurança, limitar o acesso ao cookie via scripts
+            options.LoginPath = "/api/login";
+            options.Events.OnSigningIn = context =>
+            {
+                // Inserir JWT no cookie
+                // var token = new GenerateRefreshToken();
+                // var jwtToken = token.GenerateJwtToken(context.Principal!);
+                // context.CookieOptions.Expires = DateTime.UtcNow.AddDays(3);
+                // context.Response.Cookies.Append("RefreshToken", jwtToken, context.CookieOptions);
+                return Task.CompletedTask;
+            };
         }
-        // OnMessageReceived = context =>
-        // {
-        //     if (context.Request.Cookies.ContainsKey("AccessToken"))
-        //     {
-        //         context.Token = context.Request.Cookies["AccessToken"];
-        //     }
-        //     return Task.CompletedTask;
-        // }
-    };
-});
-
-
+    );
 
 // builder
 //     .Services.AddAuthentication(options =>

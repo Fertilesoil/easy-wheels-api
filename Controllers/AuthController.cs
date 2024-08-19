@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using EasyWheelsApi.Configuration;
 using EasyWheelsApi.Models.Dtos;
@@ -54,6 +55,13 @@ namespace EasyWheelsApi.Controllers
                 lockoutOnFailure: false
             );
 
+            // await _signInManager.PasswordSignInAsync(
+            //     userFound!,
+            //     user.Password,
+            //     isPersistent: false,
+            //     lockoutOnFailure: false
+            // );
+
             if (!result.Succeeded)
             {
                 throw new CustomException(
@@ -63,43 +71,46 @@ namespace EasyWheelsApi.Controllers
                 );
             }
 
-            var identity = new ClaimsIdentity(
-                new[]
-                {
-                    new Claim(ClaimTypes.NameIdentifier, userFound.Id.ToString()),
-                    new Claim(ClaimTypes.Email, userFound.Email!)
-                }
-            );
-
             var tokenService = new TokenConfiguration(_configuration);
             var accessToken = tokenService.GenerateJwtToken(userFound);
-            var refreshToken = tokenService.GenerateRefreshToken(userFound);
+            
+            // var identity = new ClaimsIdentity(
+            //     new[]
+            //     {
+            //         new Claim(ClaimTypes.NameIdentifier, userFound.Id.ToString()),
+            //         new Claim(ClaimTypes.Email, userFound.Email!)
+            //     }
+            // );
 
-            // Adiciona o Access Token como um cookie HTTP-Only
-            HttpContext.Response.Cookies.Append(
-                "AccessToken",
-                accessToken,
-                new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true, // Deve ser true em produção
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(5),
-                    SameSite = SameSiteMode.None
-                }
-            );
+            // var tokenService = new TokenConfiguration(_configuration);
+            // var accessToken = tokenService.GenerateJwtToken(userFound);
+            // var refreshToken = tokenService.GenerateRefreshToken(userFound);
 
-            // Adiciona o Refresh Token como um cookie HTTP-Only
-            HttpContext.Response.Cookies.Append(
-                "RefreshToken",
-                refreshToken,
-                new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true, // Deve ser true em produção
-                    Expires = DateTimeOffset.UtcNow.AddDays(3),
-                    SameSite = SameSiteMode.None
-                }
-            );
+            // // Adiciona o Access Token como um cookie HTTP-Only
+            // HttpContext.Response.Cookies.Append(
+            //     "AccessToken",
+            //     accessToken,
+            //     new CookieOptions
+            //     {
+            //         HttpOnly = true,
+            //         Secure = true, // Deve ser true em produção
+            //         Expires = DateTimeOffset.UtcNow.AddMinutes(5),
+            //         SameSite = SameSiteMode.None
+            //     }
+            // );
+
+            // // Adiciona o Refresh Token como um cookie HTTP-Only
+            // HttpContext.Response.Cookies.Append(
+            //     "RefreshToken",
+            //     refreshToken,
+            //     new CookieOptions
+            //     {
+            //         HttpOnly = true,
+            //         Secure = true, // Deve ser true em produção
+            //         Expires = DateTimeOffset.UtcNow.AddDays(3),
+            //         SameSite = SameSiteMode.None
+            //     }
+            // );
 
             // return Ok(new { Message = "Login successful" });
 
