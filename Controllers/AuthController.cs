@@ -91,6 +91,7 @@ namespace EasyWheelsApi.Controllers
                     HttpOnly = true,
                     Secure = true, // Deve ser true em produção
                     Expires = brazilTime.AddMinutes(5),
+                    MaxAge = TimeSpan.FromMinutes(5),
                     SameSite = SameSiteMode.None
                 }
             );
@@ -104,6 +105,7 @@ namespace EasyWheelsApi.Controllers
                     HttpOnly = true,
                     Secure = true, // Deve ser true em produção
                     Expires = brazilTime.AddDays(3),
+                    MaxAge = TimeSpan.FromDays(3),
                     SameSite = SameSiteMode.None
                 }
             );
