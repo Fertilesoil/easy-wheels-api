@@ -75,6 +75,13 @@ namespace EasyWheelsApi.Controllers
             var accessToken = tokenService.GenerateJwtToken(userFound);
             var refreshToken = tokenService.GenerateRefreshToken(userFound);
 
+            var brazilTimeZone = TimeZoneInfo.FindSystemTimeZoneById(
+                "E. America/Sao_Paulo"
+            );
+
+            // Obter a hora atual no fuso horário do Brasil
+            var brazilTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, brazilTimeZone);
+
             // Adiciona o Access Token como um cookie HTTP-Only
             Response.Cookies.Append(
                 "AccessToken",
@@ -83,7 +90,7 @@ namespace EasyWheelsApi.Controllers
                 {
                     HttpOnly = true,
                     Secure = true, // Deve ser true em produção
-                    Expires = DateTime.UtcNow.AddMinutes(5),
+                    Expires = brazilTime.AddMinutes(5),
                     SameSite = SameSiteMode.None
                 }
             );
@@ -96,7 +103,7 @@ namespace EasyWheelsApi.Controllers
                 {
                     HttpOnly = true,
                     Secure = true, // Deve ser true em produção
-                    Expires = DateTime.UtcNow.AddDays(3),
+                    Expires = brazilTime.AddDays(3),
                     SameSite = SameSiteMode.None
                 }
             );
