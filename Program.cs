@@ -176,29 +176,20 @@ builder.Services.AddAuthentication(options =>
     {
         OnMessageReceived = context =>
         {
-            if (context.Request.Cookies.ContainsKey("AccessToken"))
-            {
-                context.Token = context.Request.Cookies["AccessToken"];
-            }
+            context.Request.Cookies.TryGetValue("RefreshToken", out var refreshToken);
+            if (!string.IsNullOrEmpty(refreshToken))
+                context.Token = refreshToken;
+
             return Task.CompletedTask;
         }
-    };
-})
-.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-{
-    options.Cookie.HttpOnly = true;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Somente HTTPS
-    options.Cookie.SameSite = SameSiteMode.None; // Protege contra CSRF
-    options.Cookie.Name = "YourAppCookie";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(5); // Expira em 5 minutos
-    options.SlidingExpiration = true; // Renovação automática do cookie
-    options.Events = new CookieAuthenticationEvents
-    {
-        OnRedirectToLogin = context =>
-        {
-            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-            return Task.CompletedTask;
-        }
+        // OnMessageReceived = context =>
+        // {
+        //     if (context.Request.Cookies.ContainsKey("AccessToken"))
+        //     {
+        //         context.Token = context.Request.Cookies["AccessToken"];
+        //     }
+        //     return Task.CompletedTask;
+        // }
     };
 });
 
@@ -306,13 +297,6 @@ else
         c.RoutePrefix = string.Empty;
     });
 }
-
-app.UseCookiePolicy(new CookiePolicyOptions
-{
-    MinimumSameSitePolicy = SameSiteMode.None,
-    HttpOnly = HttpOnlyPolicy.Always,
-    Secure = CookieSecurePolicy.Always
-});
 
 app.UseHttpsRedirection();
 
