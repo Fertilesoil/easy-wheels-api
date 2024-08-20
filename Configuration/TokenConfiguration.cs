@@ -52,7 +52,7 @@ namespace EasyWheelsApi.Configuration
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(3),
+                expires: DateTime.UtcNow.AddMinutes(3),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256
@@ -67,6 +67,8 @@ namespace EasyWheelsApi.Configuration
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
 
+            try
+            {
                 var principal = tokenHandler.ValidateToken(
                     refreshToken,
                     new TokenValidationParameters
@@ -75,13 +77,30 @@ namespace EasyWheelsApi.Configuration
                         IssuerSigningKey = new SymmetricSecurityKey(key),
                         ValidateIssuer = false,
                         ValidateAudience = false,
-                        ValidateLifetime = false,
+                        ValidateLifetime = true,
                         ClockSkew = TimeSpan.Zero
                     },
                     out SecurityToken validatedToken
                 );
 
                 return principal;
+            }
+            catch (SecurityTokenExpiredException)
+            {
+                throw new CustomException(
+                    "Expired token",
+                    "The refresh token is expired",
+                    StatusCodes.Status401Unauthorized
+                );
+            }
+            catch (Exception ex)
+            {
+                throw new CustomException(
+                    "Invalid token",
+                    "The refresh token is invalid",
+                    StatusCodes.Status401Unauthorized
+                );
+            }
         }
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
