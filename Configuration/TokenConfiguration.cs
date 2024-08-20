@@ -52,7 +52,7 @@ namespace EasyWheelsApi.Configuration
                 issuer: jwtSettings["Issuer"],
                 audience: jwtSettings["Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(3),
+                expires: DateTime.UtcNow.AddDays(3),
                 signingCredentials: new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256
