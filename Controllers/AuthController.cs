@@ -22,7 +22,7 @@ namespace EasyWheelsApi.Controllers
         private readonly SignInManager<User> _signInManager = signInManager;
         private readonly IConfiguration _configuration = configuration;
 
-        public sealed record TokenDto(string Token);
+        public sealed record TokenDto(string Token, string Email);
 
         private sealed record TokenAndRefreshDto(string AccessToken, string RefreshToken);
 
@@ -153,7 +153,7 @@ namespace EasyWheelsApi.Controllers
 
                 return Ok(
                     JsonConvert.SerializeObject(
-                        new TokenDto("Bearer " + newAccessToken),
+                        new TokenDto("Bearer " + newAccessToken, userFound.Email!),
                         Formatting.Indented
                     )
                 );
