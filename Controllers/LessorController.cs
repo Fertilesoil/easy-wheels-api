@@ -62,7 +62,7 @@ namespace EasyWheelsApi.Controllers
         }
 
         [Authorize]
-        [HttpGet("{email}", Name = "LessorPerEmail")]
+        [HttpPost("email", Name = "LessorPerEmail")]
         [SwaggerOperation(
             Summary = "Buscar um Locador por Email",
             Description = "A operação retorna um Locador cadastrado."
@@ -73,7 +73,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto)),
         ]
-        public async Task<IActionResult> GetLessorByEmail(string email)
+        public async Task<IActionResult> GetLessorByEmail([FromBody] string email)
         {
             var lessor =
                 await _service.GetLessorByEmail(email)

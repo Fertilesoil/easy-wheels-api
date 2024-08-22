@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EasyWheelsApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7facafd378a6ef3e4151bf65adf97d3fef738ea1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1343700862ec20ed6d18a075b17a82c53c926ee5")]
 [assembly: System.Reflection.AssemblyProductAttribute("EasyWheelsApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EasyWheelsApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

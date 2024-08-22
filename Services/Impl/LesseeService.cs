@@ -66,6 +66,15 @@ namespace EasyWheelsApi.Services.Impl
                 .Select(l => l.ToResponseLessee());
         }
 
+        public async Task<Lessee> GetLesseeByEmailAsync(string email)
+        {
+            var lessee = await _userManager
+                .Users.OfType<Lessee>()
+                .Include(r => r.Rentals)
+                .FirstOrDefaultAsync(l => l.Email == email);
+            return lessee!;
+        }
+
         public async Task<Lessee> GetLesseeByidAsync(string id)
         {
             var lessee = await _userManager

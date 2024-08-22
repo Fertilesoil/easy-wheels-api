@@ -8,6 +8,7 @@ namespace EasyWheelsApi.Services.Interfaces
     {
         IQueryable<LesseeResponseDto> GetAllLesseesAsync();
         Task<Lessee> GetLesseeByidAsync(string id);
+        Task<Lessee> GetLesseeByEmailAsync(string Email);
         Task UpdateLesseeAsync(Lessee updatedLessor, Lessee actualUser);
         Task<Lessee> CreateLesseeAsync(AddUserDto lessee, string password);
         Task<bool> DeleteLessee(string id);
