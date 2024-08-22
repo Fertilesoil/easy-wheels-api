@@ -23,8 +23,8 @@ namespace EasyWheelsApi.Controllers
         private readonly IConfiguration _configuration = configuration;
 
         public sealed record TokenDto(string Token, string Email, string UserType);
-
-        private sealed record TokenAndRefreshDto(string AccessToken, string RefreshToken);
+        public sealed record TokenReceived(string Token, string Email);
+        private sealed record TokenAndRefreshDto(string AccessToken, string RefreshToken, string UserType);
 
         [HttpPost("login")]
         [SwaggerOperation(
@@ -70,7 +70,7 @@ namespace EasyWheelsApi.Controllers
 
             return Ok(
                 JsonConvert.SerializeObject(
-                    new TokenAndRefreshDto("Bearer " + accessToken, "Bearer " + refreshToken),
+                    new TokenAndRefreshDto("Bearer " + accessToken, "Bearer " + refreshToken, userFound.UserType),
                     Formatting.Indented
                 )
             );
@@ -118,7 +118,7 @@ namespace EasyWheelsApi.Controllers
             SwaggerResponse(404, "Not Found", typeof(CustomExceptionDto)),
             SwaggerResponse(500, "Internal Error", typeof(CustomExceptionDto))
         ]
-        public async Task<IActionResult> RefreshToken([FromBody] TokenDto receivedToken)
+        public async Task<IActionResult> RefreshToken([FromBody] TokenReceived receivedToken)
         {
             if (receivedToken == null)
                 throw new CustomException(
