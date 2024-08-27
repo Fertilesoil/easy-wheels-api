@@ -4714,11 +4714,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
+      "projectUniqueName": "c:\\Users\\user\\Desktop\\easy-wheels-api\\EasyWheelsApi.csproj",
       "projectName": "EasyWheelsApi",
-      "projectPath": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
+      "projectPath": "c:\\Users\\user\\Desktop\\easy-wheels-api\\EasyWheelsApi.csproj",
       "packagesPath": "C:\\Users\\user\\.nuget\\packages\\",
-      "outputPath": "c:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\obj\\",
+      "outputPath": "c:\\Users\\user\\Desktop\\easy-wheels-api\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\user\\AppData\\Roaming\\NuGet\\NuGet.Config"

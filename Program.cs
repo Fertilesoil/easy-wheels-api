@@ -73,7 +73,7 @@ builder.Services.AddSwaggerGen(c =>
         {
             Title = "EasyWheelsApi",
             Version = "v1",
-            Description = "Hell Yeah",
+            Description = "Api feita para o programa Generation Impulso Empregabilidade destinado aos ex alunos do programa. A api tem o intuito de facilitar a vida de pessoas físicas que buscam alugar seus carros para outras pessoas físicas de maneira descomplicada. Você poderá se cadastrar como um Locador(a) ou Locatário(a) e expor seus carros ou buscar por um. A api conta com um sistema de gerenciamento dos alugueis para ambas as partes e emissão de modelo de contrato.",
             Contact = new OpenApiContact
             {
                 Email = "fdias132@gmail.com",

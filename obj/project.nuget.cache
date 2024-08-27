@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Y8Pe+VkYR88xczKrrGUhhwmxZn/WRjbxoBjurzO/mnkydYyA3OVG+Ho8EfmVqGeYMGFIrnwrM4TC+pmX84Gv1w==",
+  "dgSpecHash": "UJQ1bTuMrtVFptI+x8oupuhMTIw8UKKym//K3KzYN280UutcCT75y+sJRIEzX33hl+ybj3QzCkVKaJGgTQSaBg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\user\\Desktop\\CloneWheels\\EasyWheelsApi\\EasyWheelsApi.csproj",
+  "projectFilePath": "C:\\Users\\user\\Desktop\\easy-wheels-api\\EasyWheelsApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\user\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\user\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
